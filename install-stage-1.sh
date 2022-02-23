@@ -30,6 +30,8 @@ alias bash-edit="vim ~/.profile"
 alias bash-reload="source ~/.profile"
 alias chia-logs="tail -f /home/chia/.chia/mainnet/log/debug.log"
 alias chia-add-nodes="curl https://chia.keva.app/ | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do timeout 5s chia show -a \$line:8444 ;done"
+alias chia--backup="sudo /home/chia/scripts/backup.sh"
+alias chia--restore="sudo /home/chia/scripts/restore.sh"
 alias temp-cpu="vcgencmd measure_temp"
 EOT
 fi
