@@ -4,10 +4,16 @@ GREEN=$'\e[1;32m'
 RED=$'\e[1;31m'
 NC=$'\e[0m' # No Color
 
-echo "${GREEN}-> Executing Stage 3${NC}"
+echo "${GREEN}-> Executing Stage 2${NC}"
+
+echo "${GREEN}-> Starting${NC}"
+docker-compose up -d
+docker-compose exec scrutiny scrutiny-collector-metrics run
 
 echo "${GREEN}-> Add your mnemonic words${NC}"
 chia keys add
+
+
 
 
 

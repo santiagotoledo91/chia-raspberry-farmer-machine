@@ -57,7 +57,7 @@ if ! grep -q "docker.io"; then
 
   sudo apt update
   #sudo apt upgrade -y
-  sudo apt install -y net-tools nmap smartmontools docker.io
+  sudo apt install -y net-tools nmap smartmontools docker.io docker-compose
   sudo apt autoclean
   sudo apt autoremove
 fi
