@@ -60,3 +60,8 @@ services:
       - /etc/os-release:/host/etc/os-release:ro
     ports:
       - "82:19999"
+
+volumes:
+  - netdataconfig:
+  - netdatalib:
+  - netdatacache:
