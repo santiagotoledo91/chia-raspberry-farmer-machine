@@ -52,6 +52,7 @@ services:
   netdata:
     image: netdata/netdata
     container_name: netdata
+    hostname: chia_netdata
     restart: unless-stopped
     cap_add:
       - SYS_PTRACE
