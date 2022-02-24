@@ -62,6 +62,6 @@ services:
       - "82:19999"
 
 volumes:
-  - netdataconfig:
-  - netdatalib:
-  - netdatacache:
+  netdataconfig:
+  netdatalib:
+  netdatacache:
