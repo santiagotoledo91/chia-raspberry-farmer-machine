@@ -43,7 +43,7 @@ services:
 
   proxy:
     image: tecnativa/docker-socket-proxy
-    container_name: docker_socker_proxy
+    container_name: docker_socket_proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
