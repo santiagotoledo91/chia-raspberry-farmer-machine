@@ -73,7 +73,8 @@ sudo passwd
   ```
 
 ## Monitoring
-
+### Scrutini (S.M.A.R.T monitor)
+- Go to `https://x.x.x.x:8080`
 ### Network
 ```shell
 speedometer-r eth0 -t eth0

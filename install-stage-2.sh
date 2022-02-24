@@ -68,7 +68,7 @@ echo "${GREEN}--> Updating packages list${NC}"
 sudo apt update
 
 echo "${GREEN}--> Installing new packages${NC}"
-sudo apt install -y net-tools nmap nmon speedometer smartmontools
+sudo apt install -y net-tools nmap nmon speedometer smartmontools docker.io
 
 #echo "${GREEN}--> Upgrading packages${NC}"
 #apt upgrade -y

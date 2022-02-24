@@ -11,8 +11,10 @@ if id "chia" &>/dev/null; then
 else
   echo "${GREEN}-> Creating the 'chia' user${NC}"
   sudo adduser --disabled-password --gecos "" chia
-  echo "${GREEN}-> Adding the 'chia' user to 'sudo' and 'video' groups ${NC}"
-  sudo usermod -aG sudo,video chia
+  echo "${GREEN}-> Creating the 'docker' group${NC}"
+  sudo groupadd docker
+  echo "${GREEN}-> Adding the 'chia' user to 'sudo', 'video' and 'docker' groups ${NC}"
+  sudo usermod -aG sudo,video,docker chia
   echo "${GREEN}-> Set a password for the 'chia' user${NC}"
   sudo passwd chia
 fi
@@ -29,6 +31,8 @@ alias reboot="sudo systemctl stop chia-farmer.service && shutdown -r now"
 alias bash-edit="vim ~/.profile"
 alias bash-reload="source ~/.profile"
 alias chia-logs="tail -f /home/chia/.chia/mainnet/log/debug.log"
+alias chia-logs-wallet="tail -f /home/chia/.chia/mainnet/log/debug.log | grep --color=never 'wallet'"
+alias chia-logs-blockchain="tail -f /home/chia/.chia/mainnet/log/debug.log | grep --color=never 'Added blocks'"
 alias chia-add-nodes="curl https://chia.keva.app/ | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do timeout 5s chia show -a \$line:8444 ;done"
 alias chia--backup="sudo /home/chia/scripts/backup.sh"
 alias chia--restore="sudo /home/chia/scripts/restore.sh"
