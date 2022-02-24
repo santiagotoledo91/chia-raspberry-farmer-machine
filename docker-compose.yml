@@ -21,7 +21,6 @@ services:
     image: lscr.io/linuxserver/scrutiny
     container_name: scrutiny
     restart: unless-stopped
-    hostname: chia
     cap_add:
       - SYS_RAWIO
     environment:
