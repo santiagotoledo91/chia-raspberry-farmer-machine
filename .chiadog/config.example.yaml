@@ -22,4 +22,4 @@ notifier:
 
 keep_alive_monitor:
   enable_remote_ping: true
-  ping_url: ''
+  ping_url: 'replace_me'
