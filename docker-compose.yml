@@ -1,21 +1,22 @@
 version: "3.6"
 
 services:
-#  chia:
-#    image: ghcr.io/chia-network/chia:latest
-#    container_name: chia
-#    restart: unless-stopped
-#    environment:
-#      # Disable key generation on start
-#      - keys=
-#      - TZ=Europe/Madrid
-#      # Enable log file generation
-##      - log_to_file=true
-#    volumes:
-#      - ./disks:/plots
-#      - .chia:/root/.chia
-#    ports:
-#      - "8444:8444"
+  chia:
+    image: ghcr.io/chia-network/chia:latest
+    container_name: chia
+    restart: unless-stopped
+    environment:
+      # Disable key generation on start
+      - keys=
+      - TZ=Europe/Madrid
+      # Enable log file generation
+      - log_level=INFO
+      - log_to_file=true
+    volumes:
+      - ./disks:/plots
+      - ./.chia:/root/.chia
+    ports:
+      - "8444:8444"
 
   scrutiny:
     image: lscr.io/linuxserver/scrutiny
@@ -58,6 +59,9 @@ services:
       - SYS_PTRACE
     environment:
       - DOCKER_HOST=proxy:2375
+      - NETDATA_CLAIM_TOKEN=BRU1V5nyciNrqmgN0nyFPRbErFg3UZF4ksfk19ccF675rgWxy2iRB8--FRozdXJGtcgnkCkIvHiJZbpX7d6UwsgbpDF2t0dTdzdP82kX72WpKUmgnjGVsHdf16AVUCh-oTgu6Ig
+      - NETDATA_CLAIM_URL=https://app.netdata.cloud
+      - NETDATA_CLAIM_ROOMS=0e7990f5-a867-4995-9ff7-e9d07aacba5b
     security_opt:
       - apparmor=unconfined
     volumes:
