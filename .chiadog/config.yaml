@@ -20,8 +20,6 @@ notifier:
       bot_token: 'replace_me'
       chat_id: 'replace_me'
 
-# Enable this and chiadog will ping a remote server every 5 minutes
-# That way you can know that the monitoring is running as expected
-#keep_alive_monitor:
-#  enable_remote_ping: false
-#  ping_url: ''
+keep_alive_monitor:
+  enable_remote_ping: false
+  ping_url: 'https://hc-ping.com/24d958c6-bfce-4bca-ad40-1ed5ecb7ac26'
