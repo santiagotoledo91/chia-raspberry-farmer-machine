@@ -6,7 +6,6 @@ RED=$'\e[1;31m'
 NC=$'\e[0m' # No Color
 
 SSH_PORT=45622
-FARMER_DISKS=6
 
 echo "${GREEN}-> Executing Stage 1${NC}"
 
@@ -31,24 +30,27 @@ if ! grep -q "# Custom config" ~/.profile; then
   cat <<EOT | sudo tee -a ~/.profile
 # Custom config
 
-source ~/chia-blockchain/activate 2>/dev/null || echo "Unable to load venv, chia not installed yet"
+DOCKER_COMPOSE=docker-compose -f ./chia-raspberry-farmer-machine/docker-compose.yml
 
-alias reboot="sudo systemctl stop chia-farmer.service && shutdown -r now"
+alias shutdown="${DOCKER_COMPOSE} stop chia && shutdown now"
+alias reboot="${DOCKER_COMPOSE} stop chia && shutdown -r now"
+
 alias bash-edit="vim ~/.profile"
 alias bash-reload="source ~/.profile"
-alias chia-logs="tail -f /home/chia/.chia/mainnet/log/debug.log"
-alias chia-logs-wallet="tail -f /home/chia/.chia/mainnet/log/debug.log | grep --color=never 'wallet'"
-alias chia-logs-blockchain="tail -f /home/chia/.chia/mainnet/log/debug.log | grep --color=never 'Added blocks'"
+
+alias chia-logs="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log"
+alias chia-logs-wallet="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log | grep --color=never 'wallet'"
+alias chia-logs-blockchain="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log | grep --color=never 'Added blocks'"
 alias chia-add-nodes="curl https://chia.keva.app/ | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do timeout 5s chia show -a \$line:8444 ;done"
+
 alias chia--backup="sudo /home/chia/scripts/backup.sh"
 alias chia--restore="sudo /home/chia/scripts/restore.sh"
-alias temp-cpu="vcgencmd measure_temp"
 EOT
 fi
 
 if [[ ! -d ~/chia ]]; then
   echo "${GREEN}-> Cloning repo${NC}"
-  git clone https://github.com/santiagotoledo91/chia-raspberry-farmer-machine.git chia
+  git clone https://github.com/santiagotoledo91/chia-raspberry-farmer-machine.git
 fi
 
 # TODO improve so it checks if all the packages are installed
@@ -57,7 +59,7 @@ if ! grep -q "docker.io"; then
 
   sudo apt update
   #sudo apt upgrade -y
-  sudo apt install -y net-tools nmap smartmontools docker.io docker-compose make
+  sudo apt install -y net-tools nmap smartmontools docker.io docker-compose
   sudo apt autoclean
   sudo apt autoremove
 fi
@@ -82,29 +84,28 @@ else
   echo -e "\n# Overclocking\nover_voltage=6\narm_freq=2000" | sudo tee -a /boot/firmware/config.txt
 fi
 
-if [[ $(find ~/chia-raspberry-farmer-machine/chia/disks -maxdepth 1 -name 'chia-fd-*' | wc -l | xargs ) != "${FARMER_DISKS}" ]]; then
+if [[ $(find ~/chia-raspberry-farmer-machine/disks -maxdepth 1 -name 'chia-fd-*' | wc -l | xargs ) != 6 ]]; then
   echo "${GREEN}-> Creating farmer disks mount points${NC}"
-  # TODO parametrise to make FARMER_DISKS actually usable
-  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-1
-  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-2
-  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-3
-  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-4
-  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-5
-  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-6
+  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-1
+  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-2
+  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-3
+  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-4
+  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-5
+  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-6
 
-  sudo chmod -R 755 ~/chia/disks
+  sudo chmod -R 755 ~/chia-raspberry-farmer-machine/disks/
 fi
 
 if ! grep "# Chia farmer disks" /etc/fstab; then
   echo "${GREEN}-> Configuring automount, adding the entries to the /etc/fstab${NC}"
   cat <<EOT | sudo tee -a /etc/fstab
 # Chia farmer disks
-LABEL=chia-fd-1    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-1    ext4    defaults,nofail    0    2
-LABEL=chia-fd-2    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-2    ext4    defaults,nofail    0    2
-LABEL=chia-fd-3    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-3    ext4    defaults,nofail    0    2
-LABEL=chia-fd-4    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-4    ext4    defaults,nofail    0    2
-LABEL=chia-fd-5    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-5    ext4    defaults,nofail    0    2
-LABEL=chia-fd-6    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-6    ext4    defaults,nofail    0    2
+LABEL=chia-fd-1    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-1    ext4    defaults,nofail    0    2
+LABEL=chia-fd-2    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-2    ext4    defaults,nofail    0    2
+LABEL=chia-fd-3    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-3    ext4    defaults,nofail    0    2
+LABEL=chia-fd-4    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-4    ext4    defaults,nofail    0    2
+LABEL=chia-fd-5    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-5    ext4    defaults,nofail    0    2
+LABEL=chia-fd-6    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-6    ext4    defaults,nofail    0    2
 EOT
 fi
 
