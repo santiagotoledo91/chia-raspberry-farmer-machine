@@ -10,12 +10,22 @@ services:
       - TZ=Europe/Madrid
       - log_level=INFO
       - log_to_file=true
-      - plots_dir=/plots/chia-fd-1/plots /plots/chia-fd-2/plots /plots/chia-fd-3/plots /plots/chia-fd-4/plots /plots/chia-fd-5/plots /plots/chia-fd-6/plots
+      - plots_dir=/disks/chia-fd-1/plots /disks/chia-fd-2/plots /disks/chia-fd-3/plots /disks/chia-fd-4/plots /disks/chia-fd-5/plots /disks/chia-fd-6/plots
     volumes:
-      - ./disks:/plots
       - ./.chia:/root/.chia
+      - ./disks:/disks
     ports:
       - "8444:8444"
+
+  chiadog:
+    image: artjacobson/chiadog-docker:latest
+    container_name: chiadog
+    restart: unless-stopped
+    volumes:
+      - ./.chiadog:/root/.chiadog
+      - ./.chia/mainnet/log/debug.log:/root/.chia/mainnet/log:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
 
   scrutiny:
     image: lscr.io/linuxserver/scrutiny

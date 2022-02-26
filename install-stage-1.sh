@@ -82,15 +82,15 @@ else
   echo -e "\n# Overclocking\nover_voltage=6\narm_freq=2000" | sudo tee -a /boot/firmware/config.txt
 fi
 
-if [[ $(find ~/chia/disks -maxdepth 1 -name 'chia-fd-*' | wc -l | xargs ) != "${FARMER_DISKS}" ]]; then
+if [[ $(find ~/chia-raspberry-farmer-machine/chia/disks -maxdepth 1 -name 'chia-fd-*' | wc -l | xargs ) != "${FARMER_DISKS}" ]]; then
   echo "${GREEN}-> Creating farmer disks mount points${NC}"
   # TODO parametrise to make FARMER_DISKS actually usable
-  mkdir -p ~/chia/disks/chia-fd-1
-  mkdir -p ~/chia/disks/chia-fd-2
-  mkdir -p ~/chia/disks/chia-fd-3
-  mkdir -p ~/chia/disks/chia-fd-4
-  mkdir -p ~/chia/disks/chia-fd-5
-  mkdir -p ~/chia/disks/chia-fd-6
+  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-1
+  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-2
+  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-3
+  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-4
+  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-5
+  mkdir -p ~/chia-raspberry-farmer-machine/chia/disks/chia-fd-6
 
   sudo chmod -R 755 ~/chia/disks
 fi
@@ -99,12 +99,12 @@ if ! grep "# Chia farmer disks" /etc/fstab; then
   echo "${GREEN}-> Configuring automount, adding the entries to the /etc/fstab${NC}"
   cat <<EOT | sudo tee -a /etc/fstab
 # Chia farmer disks
-LABEL=chia-fd-1    /home/ubuntu/chia/disks/chia-fd-1    ext4    defaults,nofail    0    2
-LABEL=chia-fd-2    /home/ubuntu/chia/disks/chia-fd-2    ext4    defaults,nofail    0    2
-LABEL=chia-fd-3    /home/ubuntu/chia/disks/chia-fd-3    ext4    defaults,nofail    0    2
-LABEL=chia-fd-4    /home/ubuntu/chia/disks/chia-fd-4    ext4    defaults,nofail    0    2
-LABEL=chia-fd-5    /home/ubuntu/chia/disks/chia-fd-5    ext4    defaults,nofail    0    2
-LABEL=chia-fd-6    /home/ubuntu/chia/disks/chia-fd-6    ext4    defaults,nofail    0    2
+LABEL=chia-fd-1    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-1    ext4    defaults,nofail    0    2
+LABEL=chia-fd-2    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-2    ext4    defaults,nofail    0    2
+LABEL=chia-fd-3    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-3    ext4    defaults,nofail    0    2
+LABEL=chia-fd-4    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-4    ext4    defaults,nofail    0    2
+LABEL=chia-fd-5    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-5    ext4    defaults,nofail    0    2
+LABEL=chia-fd-6    /home/ubuntu/chia-raspberry-farmer-machine/chia/disks/chia-fd-6    ext4    defaults,nofail    0    2
 EOT
 fi
 
