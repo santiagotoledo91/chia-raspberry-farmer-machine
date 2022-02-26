@@ -6,12 +6,11 @@ services:
     container_name: chia
     restart: unless-stopped
     environment:
-      # Disable key generation on start
-      - keys=
+      - keys=persistent
       - TZ=Europe/Madrid
-      # Enable log file generation
       - log_level=INFO
       - log_to_file=true
+      - plots_dir=/plots/chia-fd-1/plots /plots/chia-fd-2/plots /plots/chia-fd-3/plots /plots/chia-fd-4/plots /plots/chia-fd-5/plots /plots/chia-fd-6/plots
     volumes:
       - ./disks:/plots
       - ./.chia:/root/.chia
