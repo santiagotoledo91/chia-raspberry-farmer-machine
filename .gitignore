@@ -3,4 +3,4 @@
 disks/*
 
 .chiadog/*
-!.chiadog/config.yaml
+!.chiadog/config.example.yaml
