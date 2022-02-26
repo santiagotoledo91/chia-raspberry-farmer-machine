@@ -30,13 +30,20 @@ if ! grep -q "# Custom config" ~/.profile; then
   cat <<EOT | sudo tee -a ~/.profile
 # Custom config
 
-DOCKER_COMPOSE=docker-compose -f ./chia-raspberry-farmer-machine/docker-compose.yml
+DOCKER_COMPOSE="docker-compose -f ./chia-raspberry-farmer-machine/docker-compose.yml"
+CHIA="${DOCKER_COMPOSE} exec chia venv/bin/chia"
 
 alias shutdown="${DOCKER_COMPOSE} stop chia && shutdown now"
 alias reboot="${DOCKER_COMPOSE} stop chia && shutdown -r now"
 
 alias bash-edit="vim ~/.profile"
 alias bash-reload="source ~/.profile"
+
+alias chia-status="${CHIA} show -s"
+alias chia-farm-summary="${CHIA} farm summary" <-- Not working
+
+
+
 
 alias chia-logs="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log"
 alias chia-logs-wallet="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log | grep --color=never 'wallet'"

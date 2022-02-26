@@ -10,7 +10,8 @@ echo "${GREEN}-> Starting environment${NC}"
 docker-compose up -d
 
 echo "${GREEN}-> Add your mnemonic words${NC}"
-docker-compose exec -it chia venv/bin/chia keys add
+# TODO maybe add some delay?
+${CHIA} keys add
 
 # TODO fix?
 bash /home/chia/scripts/restore.sh
