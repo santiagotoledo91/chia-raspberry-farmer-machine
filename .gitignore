@@ -1,3 +1,6 @@
 .idea
 
-chia-disks/*
+disks/*
+
+.chiadog/*
+!.chiadog/config.yml
