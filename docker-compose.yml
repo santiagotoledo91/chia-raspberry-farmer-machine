@@ -13,6 +13,7 @@ services:
       - plots_dir=/disks/chia-fd-1/plots /disks/chia-fd-2/plots /disks/chia-fd-3/plots /disks/chia-fd-4/plots /disks/chia-fd-5/plots /disks/chia-fd-6/plots
     volumes:
       - ./.chia:/root/.chia
+      - ./.chia_keys:/root/.chia_keys
       - ./disks:/disks
       - ./scripts:/scripts
     ports:

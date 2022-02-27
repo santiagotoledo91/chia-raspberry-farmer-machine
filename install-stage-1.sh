@@ -40,7 +40,7 @@ alias chia-logs="${DOCKER_COMPOSE} logs -tf --tail="50" chia"
 alias chia-logs-wallet="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'wallet'"
 alias chia-logs-blockchain="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'Added blocks'"
 
-alias chia-add-nodes="${DOCKER_COMPOSE} exec chia bash /scripts/add-nodes.sh"
+alias chia-add-nodes="${DOCKER_COMPOSE} exec -d chia bash /scripts/add-nodes.sh"
 
 alias chia--backup="sudo /home/chia/scripts/backup.sh"
 alias chia--restore="sudo /home/chia/scripts/restore.sh"
