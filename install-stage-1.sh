@@ -26,7 +26,6 @@ fi
 
 if ! grep -q "# Custom config" ~/.profile; then
   echo "${GREEN}-> Configuring bash profile${NC}"
-  # TODO FIX THIS!!!!!
   cat <<EOT | sudo tee -a ~/.profile
 # Custom config
 DOCKER_COMPOSE="docker-compose -f ${HOME}/chia/docker-compose.yml"
@@ -36,11 +35,14 @@ alias bash-edit="vim ~/.profile"
 alias bash-reload="source ~/.profile"
 
 alias chia-enter="${DOCKER_COMPOSE} exec chia bash"
+alias chia-status="${CHIA} show -s"
+alias chia-farm-summary="${CHIA} farm summary"
+alias chia-wallet-show="${CHIA} wallet show"
 alias chia-logs="${DOCKER_COMPOSE} logs -tf --tail="50" chia"
 alias chia-logs-wallet="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'wallet'"
 alias chia-logs-blockchain="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'Added blocks'"
 
-alias chia-add-nodes="${DOCKER_COMPOSE} exec -d chia bash /scripts/add-nodes.sh"
+alias chia-add-nodes="${DOCKER_COMPOSE} exec -d chia /scripts/add-nodes.sh"
 
 alias chia--backup="bash ~/chia/scripts/backup.sh"
 alias chia--restore="bash ~/chia/scripts/restore.sh"
