@@ -19,26 +19,26 @@ if test -d "${BKP1}"; then
   mv "${BKP1}" "${BKP2}"
 fi
 
-echo "$(date) | -> Creating backup directory"
+echo "$(date) | ${GREEN}-> Creating backup directory"
 mkdir "${BKP1}"
 
-echo "$(date) | -> Stopping the chia-farmer service"
+echo "$(date) | ${GREEN}-> Stopping the chia-farmer service"
 ${DOCKER_COMPOSE} stop chia
 
 sleep 10
 
-echo "$(date) | -> Starting new backup"
+echo "$(date) | ${GREEN}-> Starting new backup"
 
-echo "$(date) | --> Backing up the wallet db"
+echo "$(date) | ${GREEN}--> Backing up the wallet db"
 cp ~/chia/.chia/mainnet/wallet/db/blockchain_wallet_v1_mainnet_*.sqlite "${BKP1}/"
 
-echo "$(date) | --> Backing up the blockchain db"
+echo "$(date) | ${GREEN}--> Backing up the blockchain db"
 cp ~/chia/.chia/mainnet/db/blockchain_v1_mainnet.sqlite "${BKP1}/"
 
-echo "$(date) | -> Starting the chia-farmer service"
+echo "$(date) | ${GREEN}-> Starting the chia-farmer service"
 ${DOCKER_COMPOSE} start chia
 
 echo "$(date) | ${GREEN}-> Adding nodes to speed up the sync${NC}"
 ${DOCKER_COMPOSE} exec -d bash /scripts/add-nodes.sh
 
-echo "$(date) | Backup complete!"
+echo "$(date) | ${GREEN}-> Backup complete!"
