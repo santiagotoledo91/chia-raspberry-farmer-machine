@@ -44,16 +44,15 @@ sudo passwd
   ```shell
   bash install-stage-1.sh
   ```
-- It will restart automatically
+- It will shut down automatically
+- Move the raspberry to it's final destination
 - Go to `Stage 2`
 #### Stage 2
-- Login as `chia`
+- Login as `ubuntu`
 - Run the script
   ```shell
   bash install-stage-2.sh
   ```
-- It will shut down automatically
-- Move the raspberry to it's final destination
 - Go to `Stage 3`
   
 #### Stage 3

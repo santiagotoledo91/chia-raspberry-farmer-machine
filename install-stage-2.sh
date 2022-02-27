@@ -9,11 +9,11 @@ echo "${GREEN}-> Executing Stage 2${NC}"
 echo "${GREEN}-> Starting environment${NC}"
 docker-compose up -d
 
-echo "${GREEN}-> Add your mnemonic words${NC}"
-# TODO maybe add some delay?
-${CHIA} keys add
+if ! [[ -d ~/chia/.chia_keys ]]; then
+  echo "${GREEN}-> Add your mnemonic words${NC}"
+  ${CHIA} keys add
+fi
 
-# TODO fix?
 bash /home/chia/scripts/restore.sh
 
 echo "${GREEN}-> Stage 3 finished!${NC}"
