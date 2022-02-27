@@ -11,13 +11,13 @@ BKP2="${HOME}/chia/disks/chia-fd-2/chia-backup"
 
 echo  "$(date) | ${GREEN}-> Starting backup${NC}"
 
-if test -d "${BKP1}"; then
-  echo "$(date) | ${GREEN}-> Current backup found, rotating${NC}"
-  echo "$(date) | ${GREEN}--> Removing old backup${NC}"
-  rm -rf "${BKP2}"
-  echo "$(date) | ${GREEN}--> Moving ${BKP1} to ${BKP2}${NC}"
-  mv "${BKP1}" "${BKP2}"
-fi
+#if test -d "${BKP1}"; then
+#  echo "$(date) | ${GREEN}-> Current backup found, rotating${NC}"
+#  echo "$(date) | ${GREEN}--> Removing old backup${NC}"
+#  rm -rf "${BKP2}"
+#  echo "$(date) | ${GREEN}--> Moving ${BKP1} to ${BKP2}${NC}"
+#  mv "${BKP1}" "${BKP2}"
+#fi
 
 echo "$(date) | ${GREEN}-> Creating backup directory${NC}"
 mkdir "${BKP1}"
