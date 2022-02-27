@@ -53,24 +53,14 @@ sudo passwd
   ```shell
   bash install-stage-2.sh
   ```
-- Go to `Stage 3`
-  
-#### Stage 3
-**Note this stage is not idempotent, so it's intended to be run just once.**
-- Login as `chia`
-- Run the script
+  - Open the crontab:
   ```shell
-  bash install-stage-3.sh
-  ```
-- Open the crontab:
-  ```shell
-  sudo crontab -e
+  crontab -e
   ```
 - Add the backup cron:
   ```shell
-  0 7 * * 1 /home/chia/scripts/backup.sh >> /home/chia/logs/backup.log 2>&1
-  ```
-
+  0 7 * * 1 ~/chia/scripts/backup.sh >> ~/chia/logs/backup.log 2>&1
+  ```  
 ## Monitoring
 ### Scrutini (S.M.A.R.T monitor)
 - Go to `https://x.x.x.x:8080`
