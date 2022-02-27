@@ -15,7 +15,7 @@ services:
       - ./.chia:/root/.chia
       - ./.chia_keys:/root/.chia_keys
       - ./disks:/disks
-      - ./scripts:/scripts
+      - ./scripts/add-nodes.sh:/scripts/add-nodes.sh
     ports:
       - "8444:8444"
 

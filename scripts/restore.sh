@@ -4,7 +4,7 @@ GREEN=$'\e[1;32m'
 RED=$'\e[1;31m'
 NC=$'\e[0m' # No Color
 
-DOCKER_COMPOSE="docker-compose -f ~/chia/docker-compose.yml"
+DOCKER_COMPOSE="docker-compose -f ${HOME}/chia/docker-compose.yml"
 
 BKP1="${HOME}/chia/disks/chia-fd-1/chia-backup"
 
