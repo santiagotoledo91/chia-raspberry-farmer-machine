@@ -9,11 +9,11 @@ DOCKER_COMPOSE="docker-compose -f ${HOME}/chia/docker-compose.yml"
 BKP1="${HOME}/chia/disks/chia-fd-1/chia-backup"
 
 if ! sudo test -d "${BKP1}"; then
-  echo "$(date) | ${RED}-> Whoops! Looks like there is no backup on ${BKP1}${NC}"
+  echo "$(date) | ${RED}Whoops! Looks like there is no backup on ${BKP1}${NC}"
   exit 1
 fi
 
-echo "$(date) | ${GREEN}-> Starting restore${NC}"
+echo "$(date) | ${GREEN}Starting restore${NC}"
 
 echo "$(date) | ${GREEN}-> Stopping chia${NC}"
 ${DOCKER_COMPOSE} stop chia
@@ -34,5 +34,5 @@ ${DOCKER_COMPOSE} start chia
 echo "$(date) | ${GREEN}-> Adding nodes to speed up the sync${NC}"
 ${DOCKER_COMPOSE} exec -d bash /scripts/add-nodes.sh
 
-echo "$(date) | ${GREEN}-> Done!${NC}"
+echo "$(date) | ${GREEN}Done!${NC}"
 
