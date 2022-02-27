@@ -1,78 +1,115 @@
 #!/usr/bin/env bash
 
+# Colors
 GREEN=$'\e[1;32m'
 RED=$'\e[1;31m'
 NC=$'\e[0m' # No Color
 
+SSH_PORT=45622
+
 echo "${GREEN}-> Executing Stage 1${NC}"
 
-if id "chia" &>/dev/null; then
-  echo "${GREEN}-> Chia user already created!${NC}"
-else
-  echo "${GREEN}-> Creating the 'chia' user${NC}"
-  sudo adduser --disabled-password --gecos "" chia
-  echo "${GREEN}-> Creating the 'docker' group${NC}"
-  sudo groupadd docker
-  echo "${GREEN}-> Adding the 'chia' user to 'sudo', 'video' and 'docker' groups ${NC}"
-  sudo usermod -aG sudo,video,docker chia
-  echo "${GREEN}-> Set a password for the 'chia' user${NC}"
-  sudo passwd chia
-fi
-
-if [[ $(sudo grep "# Custom config" /home/chia/.profile) != "" ]]; then
-  echo "${GREEN}-> Chia profile already configured!${NC}"
-else
-  echo "${GREEN}-> Configuring chia profile${NC}"
-  cat <<EOT | sudo tee -a /home/chia/.profile
-# Custom config
-source ~/chia-blockchain/activate 2>/dev/null || echo "Unable to load venv, chia not installed yet"
-
-alias reboot="sudo systemctl stop chia-farmer.service && shutdown -r now"
-alias bash-edit="vim ~/.profile"
-alias bash-reload="source ~/.profile"
-alias chia-logs="tail -f /home/chia/.chia/mainnet/log/debug.log"
-alias chia-logs-wallet="tail -f /home/chia/.chia/mainnet/log/debug.log | grep --color=never 'wallet'"
-alias chia-logs-blockchain="tail -f /home/chia/.chia/mainnet/log/debug.log | grep --color=never 'Added blocks'"
-alias chia-add-nodes="curl https://chia.keva.app/ | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do timeout 5s chia show -a \$line:8444 ;done"
-alias chia--backup="sudo /home/chia/scripts/backup.sh"
-alias chia--restore="sudo /home/chia/scripts/restore.sh"
-alias temp-cpu="vcgencmd measure_temp"
-EOT
-fi
-
-if sudo test -f /home/chia/install-stage-2.sh; then
-  echo "${GREEN}-> Stage 2 script already downloaded!${NC}"
-else
-  echo "${GREEN}-> Downloading Stage 2 script${NC}"
-  sudo curl -L https://raw.githubusercontent.com/santiagotoledo91/chia-raspberry-farmer-machine/main/install-stage-2.sh -o /home/chia/install-stage-2.sh
-  sudo chown chia:chia /home/chia/install-stage-2.sh
-  sudo chmod 755 /home/chia/install-stage-2.sh
-fi
-
-if sudo test -f /home/chia/install-stage-3.sh; then
-  echo "${GREEN}-> Stage 3 script already downloaded!${NC}"
-else
-  echo "${GREEN}-> Downloading Stage 3 script${NC}"
-  sudo curl -L https://raw.githubusercontent.com/santiagotoledo91/chia-raspberry-farmer-machine/main/install-stage-3.sh -o /home/chia/install-stage-3.sh
-  sudo chown chia:chia /home/chia/install-stage-3.sh
-  sudo chmod 755 /home/chia/install-stage-3.sh
-fi
-
-if [[ $(timedatectl | grep Europe/Madrid) != "" ]]; then
-  echo "${GREEN}-> Timezone already set!${NC}"
-else
+if [[ $(timedatectl | grep Europe/Madrid) == "" ]]; then
   echo "${GREEN}-> Setting the timezone to Europe/Madrid${NC}"
   sudo timedatectl set-timezone Europe/Madrid
 fi
 
-if [[ $(sudo grep "# Overclocking" /boot/firmware/config.txt) != "" ]]; then
+if ! grep -q -E "^docker:" /etc/group; then
+  echo "${GREEN}-> Creating the 'docker' group${NC}"
+  sudo groupadd docker
+fi
+
+if ! grep -q "docker" "$(groups)"; then
+  echo "${GREEN}-> Adding ${USER} to 'docker' group ${NC}"
+  sudo usermod -aG docker "${USER}"
+fi
+
+if ! grep -q "# Custom config" ~/.profile; then
+  echo "${GREEN}-> Configuring bash profile${NC}"
+  cat <<EOT | sudo tee -a ~/.profile
+# Custom config
+DOCKER_COMPOSE="docker-compose -f ${HOME}/chia/docker-compose.yml"
+CHIA="${DOCKER_COMPOSE} exec chia venv/bin/chia"
+
+alias bash-edit="vim ~/.profile"
+alias bash-reload="source ~/.profile"
+
+alias chia-enter="${DOCKER_COMPOSE} exec chia bash"
+alias chia-status="${CHIA} show -s"
+alias chia-farm-summary="${CHIA} farm summary"
+alias chia-wallet-show="${CHIA} wallet show"
+alias chia-logs="${DOCKER_COMPOSE} logs -tf --tail="50" chia"
+alias chia-logs-wallet="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'wallet'"
+alias chia-logs-blockchain="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'Added blocks'"
+
+alias chia-add-nodes="${DOCKER_COMPOSE} exec -d chia /scripts/add-nodes.sh"
+
+alias chia--backup="bash ~/chia/scripts/backup.sh"
+alias chia--restore="bash ~/chia/scripts/restore.sh"
+EOT
+fi
+
+if [[ ! -d ~/chia ]]; then
+  echo "${GREEN}-> Cloning repo${NC}"
+  git clone https://github.com/santiagotoledo91/chia-raspberry-farmer-machine.git chia
+fi
+
+# TODO improve so it checks if all the packages are installed
+if ! grep -q "docker.io"; then
+  echo "${GREEN}--> Installing needed packages${NC}"
+
+  sudo apt update
+  #sudo apt upgrade -y
+  sudo apt install -y net-tools nmap smartmontools docker.io docker-compose
+  sudo apt autoclean
+  sudo apt autoremove
+fi
+
+if ! grep -q "Port ${SSH_PORT}" /etc/ssh/sshd_config; then
+  echo "${GREEN}-> Configuring SSH${NC}"
+  sudo ufw allow ssh
+  sudo sed -i "s/#Port 22/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
+  sudo systemctl reload sshd
+fi
+
+if ! test -f "/etc/modprobe.d/disable-uas.conf"; then
+  echo "${GREEN}-> Disabling UAS for Seagate 8TB drivers (S.M.A.R.T problem)${NC}"
+  echo "options usb-storage quirks=0bc2:3343:u" | sudo tee /etc/modprobe.d/disable-uas.conf
+  sudo update-initramfs -u
+fi
+
+if ! grep -q "# Overclocking" /boot/firmware/config.txt; then
   echo "${GREEN}-> Already overclocked to 2Ghz!${NC}"
 else
   echo "${GREEN}-> Overclocking to 2Ghz${NC}"
   echo -e "\n# Overclocking\nover_voltage=6\narm_freq=2000" | sudo tee -a /boot/firmware/config.txt
-  echo "${GREEN}-> Overclocked! This will make things a bit faster${NC}"
 fi
 
-echo "${GREEN}Stage 1 finished!"
-read -n 1 -s -r -p "${RED}-> Press any key to reboot...${NC}"
-sudo reboot now
+if [[ $(find ~/chia/disks -maxdepth 1 -name 'chia-fd-*' | wc -l | xargs ) != 6 ]]; then
+  echo "${GREEN}-> Creating farmer disks mount points${NC}"
+  mkdir -p ~/chia/disks/chia-fd-1
+  mkdir -p ~/chia/disks/chia-fd-2
+  mkdir -p ~/chia/disks/chia-fd-3
+  mkdir -p ~/chia/disks/chia-fd-4
+  mkdir -p ~/chia/disks/chia-fd-5
+  mkdir -p ~/chia/disks/chia-fd-6
+
+  sudo chmod -R 755 ~/chia/disks/
+fi
+
+if ! grep "# Chia farmer disks" /etc/fstab; then
+  echo "${GREEN}-> Configuring automount, adding the entries to the /etc/fstab${NC}"
+  cat <<EOT | sudo tee -a /etc/fstab
+# Chia farmer disks
+LABEL=chia-fd-1    /home/ubuntu/chia/disks/chia-fd-1    ext4    defaults,nofail    0    2
+LABEL=chia-fd-2    /home/ubuntu/chia/disks/chia-fd-2    ext4    defaults,nofail    0    2
+LABEL=chia-fd-3    /home/ubuntu/chia/disks/chia-fd-3    ext4    defaults,nofail    0    2
+LABEL=chia-fd-4    /home/ubuntu/chia/disks/chia-fd-4    ext4    defaults,nofail    0    2
+LABEL=chia-fd-5    /home/ubuntu/chia/disks/chia-fd-5    ext4    defaults,nofail    0    2
+LABEL=chia-fd-6    /home/ubuntu/chia/disks/chia-fd-6    ext4    defaults,nofail    0    2
+EOT
+fi
+
+echo "${GREEN}Stage 1 finished!${NC}"
+read -n 1 -s -r -p "${RED}-> Press any key to shutdown...${NC}"
+sudo shutdown now

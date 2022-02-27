@@ -1,1 +1,6 @@
 .idea
+
+disks/*
+
+.chiadog/*
+!.chiadog/config.example.yaml

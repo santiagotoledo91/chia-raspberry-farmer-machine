@@ -4,33 +4,35 @@ GREEN=$'\e[1;32m'
 RED=$'\e[1;31m'
 NC=$'\e[0m' # No Color
 
-BKP1="/home/chia/farmer-disks/chia-fd-1/chia-backup"
+DOCKER_COMPOSE="docker-compose -f ${HOME}/chia/docker-compose.yml"
 
-if ! sudo test -d $BKP1; then
-  echo "$(date) | {RED}-> Whoops! Looks like there is no backup on ${BKP1}${NC}"
+BKP1="${HOME}/chia/disks/chia-fd-1/chia-backup"
+
+if ! sudo test -d "${BKP1}"; then
+  echo "$(date) | ${RED}Whoops! Looks like there is no backup on ${BKP1}${NC}"
   exit 1
 fi
 
-echo "$(date) | ${GREEN}-> Starting restore${NC}"
+echo "$(date) | ${GREEN}Starting restore${NC}"
 
-echo "$(date) | ${GREEN}-> Stopping chia-farmer.service${NC}"
-sudo systemctl stop chia-farmer.service
+echo "$(date) | ${GREEN}-> Stopping chia${NC}"
+${DOCKER_COMPOSE} stop chia
 
 echo "$(date) | ${GREEN}-> Restoring wallet backup from ${BKP1}${NC}"
-rm -rf /home/chia/.chia/mainnet/wallet
-mkdir -p /home/chia/.chia/mainnet/wallet/db
-cp -r /home/chia/farmer-disks/chia-fd-1/chia-backup/blockchain_wallet_v1_mainnet_*.sqlite /home/chia/.chia/mainnet/wallet/db/
+rm -rf ~/chia/.chia/mainnet/wallet
+mkdir -p ~/chia/.chia/mainnet/wallet/db
+cp -r ~/chia/disks/chia-fd-1/chia-backup/blockchain_wallet_v1_mainnet_*.sqlite ~/chia/.chia/mainnet/wallet/db/
 
 echo "$(date) | ${GREEN}-> Restoring blockchain backup from /home/chia/farmer-disks/chia-fd-1${NC}"
-rm -rf /home/chia/.chia/mainnet/db
-mkdir -p /home/chia/.chia/mainnet/db
-cp -r /home/chia/farmer-disks/chia-fd-1/chia-backup/blockchain_v1_mainnet.sqlite /home/chia/.chia/mainnet/db/
+rm -rf ~/chia/.chia/mainnet/db
+mkdir -p ~/chia/.chia/mainnet/db
+cp -r ~/chia/farmer-disks/chia-fd-1/chia-backup/blockchain_v1_mainnet.sqlite ~/chia/.chia/mainnet/db/
 
-echo "$(date) | ${GREEN}-> Starting chia-farmer.service${NC}"
-sudo systemctl start chia-farmer.service
+echo "$(date) | ${GREEN}-> Starting chia${NC}"
+${DOCKER_COMPOSE} start chia
 
 echo "$(date) | ${GREEN}-> Adding nodes to speed up the sync${NC}"
-bash -c "curl https://chia.keva.app/ | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do timeout 5s chia show -a \$line:8444 ;done"
+${DOCKER_COMPOSE} exec -d chia bash /scripts/add-nodes.sh
 
-echo "$(date) | ${GREEN}-> Done!${NC}"
+echo "$(date) | ${GREEN}Done!${NC}"
 
