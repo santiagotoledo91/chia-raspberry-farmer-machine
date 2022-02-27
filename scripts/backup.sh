@@ -22,7 +22,7 @@ if [[ -d "${BKP1}" ]] && ! [[ "${ROTATE}" == "false" ]]; then
 fi
 
 echo "$(date) | ${GREEN}-> Creating backup directory${NC}"
-mkdir "${BKP1}"
+mkdir -p "${BKP1}"
 
 echo "$(date) | ${GREEN}-> Stopping the chia-farmer service${NC}"
 ${DOCKER_COMPOSE} stop chia
