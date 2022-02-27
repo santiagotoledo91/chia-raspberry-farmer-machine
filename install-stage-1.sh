@@ -29,26 +29,18 @@ if ! grep -q "# Custom config" ~/.profile; then
   # TODO FIX THIS!!!!!
   cat <<EOT | sudo tee -a ~/.profile
 # Custom config
-
-DOCKER_COMPOSE="docker-compose -f ./chia-raspberry-farmer-machine/docker-compose.yml"
+DOCKER_COMPOSE="docker-compose -f ${HOME}/chia/docker-compose.yml"
 CHIA="${DOCKER_COMPOSE} exec chia venv/bin/chia"
-
-alias shutdown="${DOCKER_COMPOSE} stop chia && shutdown now"
-alias reboot="${DOCKER_COMPOSE} stop chia && shutdown -r now"
 
 alias bash-edit="vim ~/.profile"
 alias bash-reload="source ~/.profile"
 
-alias chia-status="${CHIA} show -s"
-alias chia-farm-summary="${CHIA} farm summary" <-- Not working
+alias chia-enter="${DOCKER_COMPOSE} exec chia bash"
+alias chia-logs="${DOCKER_COMPOSE} logs -tf --tail="50" chia"
+alias chia-logs-wallet="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'wallet'"
+alias chia-logs-blockchain="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep --color=never 'Added blocks'"
 
-
-
-
-alias chia-logs="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log"
-alias chia-logs-wallet="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log | grep --color=never 'wallet'"
-alias chia-logs-blockchain="tail -f ~/chia-raspberry-farmer-machine/.chia/mainnet/log/debug.log | grep --color=never 'Added blocks'"
-alias chia-add-nodes="curl https://chia.keva.app/ | grep -Eo '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | while read line; do timeout 5s chia show -a \$line:8444 ;done"
+alias chia-add-nodes="${DOCKER_COMPOSE} exec chia bash /scripts/add-nodes.sh"
 
 alias chia--backup="sudo /home/chia/scripts/backup.sh"
 alias chia--restore="sudo /home/chia/scripts/restore.sh"
@@ -57,7 +49,7 @@ fi
 
 if [[ ! -d ~/chia ]]; then
   echo "${GREEN}-> Cloning repo${NC}"
-  git clone https://github.com/santiagotoledo91/chia-raspberry-farmer-machine.git
+  git clone https://github.com/santiagotoledo91/chia-raspberry-farmer-machine.git chia
 fi
 
 # TODO improve so it checks if all the packages are installed
@@ -91,28 +83,28 @@ else
   echo -e "\n# Overclocking\nover_voltage=6\narm_freq=2000" | sudo tee -a /boot/firmware/config.txt
 fi
 
-if [[ $(find ~/chia-raspberry-farmer-machine/disks -maxdepth 1 -name 'chia-fd-*' | wc -l | xargs ) != 6 ]]; then
+if [[ $(find ~/chia/disks -maxdepth 1 -name 'chia-fd-*' | wc -l | xargs ) != 6 ]]; then
   echo "${GREEN}-> Creating farmer disks mount points${NC}"
-  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-1
-  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-2
-  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-3
-  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-4
-  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-5
-  mkdir -p ~/chia-raspberry-farmer-machine/disks/chia-fd-6
+  mkdir -p ~/chia/disks/chia-fd-1
+  mkdir -p ~/chia/disks/chia-fd-2
+  mkdir -p ~/chia/disks/chia-fd-3
+  mkdir -p ~/chia/disks/chia-fd-4
+  mkdir -p ~/chia/disks/chia-fd-5
+  mkdir -p ~/chia/disks/chia-fd-6
 
-  sudo chmod -R 755 ~/chia-raspberry-farmer-machine/disks/
+  sudo chmod -R 755 ~/chia/disks/
 fi
 
 if ! grep "# Chia farmer disks" /etc/fstab; then
   echo "${GREEN}-> Configuring automount, adding the entries to the /etc/fstab${NC}"
   cat <<EOT | sudo tee -a /etc/fstab
 # Chia farmer disks
-LABEL=chia-fd-1    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-1    ext4    defaults,nofail    0    2
-LABEL=chia-fd-2    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-2    ext4    defaults,nofail    0    2
-LABEL=chia-fd-3    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-3    ext4    defaults,nofail    0    2
-LABEL=chia-fd-4    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-4    ext4    defaults,nofail    0    2
-LABEL=chia-fd-5    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-5    ext4    defaults,nofail    0    2
-LABEL=chia-fd-6    /home/ubuntu/chia-raspberry-farmer-machine/disks/chia-fd-6    ext4    defaults,nofail    0    2
+LABEL=chia-fd-1    /home/ubuntu/chia/disks/chia-fd-1    ext4    defaults,nofail    0    2
+LABEL=chia-fd-2    /home/ubuntu/chia/disks/chia-fd-2    ext4    defaults,nofail    0    2
+LABEL=chia-fd-3    /home/ubuntu/chia/disks/chia-fd-3    ext4    defaults,nofail    0    2
+LABEL=chia-fd-4    /home/ubuntu/chia/disks/chia-fd-4    ext4    defaults,nofail    0    2
+LABEL=chia-fd-5    /home/ubuntu/chia/disks/chia-fd-5    ext4    defaults,nofail    0    2
+LABEL=chia-fd-6    /home/ubuntu/chia/disks/chia-fd-6    ext4    defaults,nofail    0    2
 EOT
 fi
 
