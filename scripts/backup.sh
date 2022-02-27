@@ -1,38 +1,44 @@
 #!/usr/bin/env bash
 
-BKP1="/home/chia/farmer-disks/chia-fd-1/chia-backup"
-BKP2="/home/chia/farmer-disks/chia-fd-2/chia-backup"
+GREEN=$'\e[1;32m'
+RED=$'\e[1;31m'
+NC=$'\e[0m' # No Color
 
-echo  "$(date) | Starting backup"
+DOCKER_COMPOSE="docker-compose -f ~/chia/docker-compose.yml"
 
-if test -d $BKP1; then
-  echo "$(date) | -> Current backup found, rotating"
-  echo "$(date) | --> Removing old backup"
+BKP1="${HOME}/chia/disks/chia-fd-1/chia-backup"
+BKP2="${HOME}/chia/disks/chia-fd-2/chia-backup"
+
+echo  "$(date) | ${GREEN}->Starting backup"
+
+if test -d "${BKP1}"; then
+  echo "$(date) | ${GREEN}-> Current backup found, rotating"
+  echo "$(date) | ${GREEN}--> Removing old backup"
   rm -rf "${BKP2}"
-  echo "$(date) | --> Moving ${BKP1} to ${BKP2}"
+  echo "$(date) | ${GREEN}--> Moving ${BKP1} to ${BKP2}"
   mv "${BKP1}" "${BKP2}"
-  echo "$(date) | --> Assigning ${BKP2} to chia:chia"
-  chown -R chia:chia "${BKP2}"
 fi
 
 echo "$(date) | -> Creating backup directory"
 mkdir "${BKP1}"
 
 echo "$(date) | -> Stopping the chia-farmer service"
-systemctl stop chia-farmer.service
+${DOCKER_COMPOSE} stop chia
+
+sleep 10
 
 echo "$(date) | -> Starting new backup"
 
 echo "$(date) | --> Backing up the wallet db"
-cp /home/chia/.chia/mainnet/wallet/db/blockchain_wallet_v1_mainnet_*.sqlite "${BKP1}/"
+cp ~/chia/.chia/mainnet/wallet/db/blockchain_wallet_v1_mainnet_*.sqlite "${BKP1}/"
 
 echo "$(date) | --> Backing up the blockchain db"
-cp /home/chia/.chia/mainnet/db/blockchain_v1_mainnet.sqlite "${BKP1}/"
-
-echo "$(date) | --> Assigning ${BKP1} to chia:chia"
-chown -R chia:chia "${BKP1}"
+cp ~/chia/.chia/mainnet/db/blockchain_v1_mainnet.sqlite "${BKP1}/"
 
 echo "$(date) | -> Starting the chia-farmer service"
-systemctl start chia-farmer.service
+${DOCKER_COMPOSE} start chia
+
+echo "$(date) | ${GREEN}-> Adding nodes to speed up the sync${NC}"
+${DOCKER_COMPOSE} exec -d bash /scripts/add-nodes.sh
 
 echo "$(date) | Backup complete!"

@@ -42,8 +42,8 @@ alias chia-logs-blockchain="${DOCKER_COMPOSE} logs -tf --tail="50" chia | grep -
 
 alias chia-add-nodes="${DOCKER_COMPOSE} exec -d chia bash /scripts/add-nodes.sh"
 
-alias chia--backup="sudo /home/chia/scripts/backup.sh"
-alias chia--restore="sudo /home/chia/scripts/restore.sh"
+alias chia--backup="bash ~/chia/scripts/backup.sh"
+alias chia--restore="bash ~/chia/scripts/restore.sh"
 EOT
 fi
 
