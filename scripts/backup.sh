@@ -41,6 +41,6 @@ echo "$(date) | ${GREEN}-> Starting chia${NC}"
 ${DOCKER_COMPOSE} start chia
 
 echo "$(date) | ${GREEN}-> Adding nodes to speed up the sync${NC}${NC}"
-${DOCKER_COMPOSE} exec -d bash /scripts/add-nodes.sh
+${DOCKER_COMPOSE} exec -d chia bash /scripts/add-nodes.sh
 
 echo "$(date) | ${GREEN}Backup complete!${NC}"
