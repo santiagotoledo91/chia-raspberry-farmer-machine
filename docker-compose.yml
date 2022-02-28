@@ -89,6 +89,29 @@ services:
     ports:
       - "82:19999"
 
+  samba:
+    image: dperson/samba:latest
+    container_name: samba
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Madrid
+#    read_only: true
+#    tmpfs:
+#      - /tmp
+#    tty: true
+#    stdin_open: true
+    command: '-s "chia-fd-x;/chia-fd-x" -u "chia;chia"'
+    volumes:
+      - ./.chiadog:/chia-fd-x
+    ports:
+      - "137:139/udp"
+      - "138:139/udp"
+      - "139:139/tcp"
+      - "445:445/tcp"
+
+
+
+
 volumes:
   netdataconfig:
   netdatalib:
