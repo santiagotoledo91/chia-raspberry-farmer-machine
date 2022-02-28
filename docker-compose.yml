@@ -95,9 +95,9 @@ services:
     restart: on-failure
     environment:
       - TZ=Europe/Madrid
-      - PUID=1000
-      - PGID=1000
-    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia;1000;chia;1000" -p'
+      - USERID=1001
+      - GROUPID=1001
+    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia" -p'
     volumes:
       - ./sambatest:/chia-fd-x
     ports:
