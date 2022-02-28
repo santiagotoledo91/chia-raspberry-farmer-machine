@@ -67,10 +67,16 @@ fi
 
 if ! grep -q "Port ${SSH_PORT}" /etc/ssh/sshd_config; then
   echo "${GREEN}-> Configuring SSH${NC}"
-  sudo ufw allow ssh
   sudo sed -i "s/#Port 22/Port ${SSH_PORT}/g" /etc/ssh/sshd_config
   sudo systemctl reload sshd
 fi
+
+echo "${GREEN}-> Configuring Firewall${NC}"
+sudo ufw allow ${SSH_PORT} comment "SSH"
+sudo ufw allow 8444 comment "Chia daemon"
+sudo ufw allow from 192.168.31.200 to any port 55400 proto tcp comment "Chia UI @ Desktop"
+sudo ufw allow from 192.168.31.202 to any port 55400 proto tcp comment "Chia UI @ MacBook Pro"
+sudo ufw enable
 
 if ! test -f "/etc/modprobe.d/disable-uas.conf"; then
   echo "${GREEN}-> Disabling UAS for Seagate 8TB drivers (S.M.A.R.T problem)${NC}"
