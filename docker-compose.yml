@@ -95,7 +95,7 @@ services:
     restart: on-failure
     environment:
       - TZ=Europe/Madrid
-    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia;chia;chia;Chia plotting destination disk" -u "chia;chia"'
+    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia;chia;chia;Chia plotting destination disk" -u "chia;chia;1001;chia;1001"'
     volumes:
       - ./disks/chia-fd-6:/chia-fd-x
     ports:
