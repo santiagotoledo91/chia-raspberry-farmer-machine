@@ -99,7 +99,7 @@ services:
       - GROUPID=1001
     command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia" -G "chia-fd-x;create mask = 0755" -G "chia-fd-x;force create mode = 0755" -r -p'
     volumes:
-      - ./sambatest:/chia-fd-x
+      - ./disks/chia-fd-6:/chia-fd-x
     ports:
       - "139:139/tcp"
       - "445:445/tcp"
