@@ -95,10 +95,10 @@ services:
     restart: on-failure
     environment:
       - TZ=Europe/Madrid
-#      - USERID=1001
-#      - GROUPID=1001
-#      - PERMISSIONS=755
-    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia;1001;chia;1001" -p'
+    command: >
+      -s "chia-fd-x;/chia-fd-x;yes;no;no;chia" 
+      -u "1000:1000:chia:chia:chia" 
+      -p
     volumes:
       - ./sambatest:/chia-fd-x
     ports:
