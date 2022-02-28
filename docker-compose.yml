@@ -97,7 +97,7 @@ services:
       - TZ=Europe/Madrid
       - USERID=1001
       - GROUPID=1001
-    command: '-G "chia-fd-x;create mask = 0777" -G "chia-fd-x;force create mode = 0777" -s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia" -r -p'
+    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia" -G "chia-fd-x;create mask = 0777" -G "chia-fd-x;force create mode = 0777" -r -p'
     volumes:
       - ./sambatest:/chia-fd-x
     ports:
