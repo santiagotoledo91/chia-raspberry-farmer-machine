@@ -95,22 +95,12 @@ services:
     restart: on-failure
     environment:
       - TZ=Europe/Madrid
-#    read_only: true
-#    tmpfs:
-#      - /tmp
-#    tty: true
-#    stdin_open: true
-    command: '-s "chia-fd-x;/chia-fd-x" -u "chia;chia"'
+    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia;chia;chia;Chia plotting destination disk" -u "chia;chia"'
     volumes:
-      - ./.chiadog:/chia-fd-x
+      - ./disks/chia-fd-6:/chia-fd-x
     ports:
-      - "137:139/udp"
-      - "138:139/udp"
       - "139:139/tcp"
       - "445:445/tcp"
-
-
-
 
 volumes:
   netdataconfig:
