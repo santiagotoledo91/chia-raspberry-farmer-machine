@@ -95,10 +95,7 @@ services:
     restart: on-failure
     environment:
       - TZ=Europe/Madrid
-    command: >
-      -s "chia-fd-x;/chia-fd-x;yes;no;no;chia" 
-      -u "1000:1000:chia:chia:chia" 
-      -p
+    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "1000:1000:chia:chia:chia" -p'
     volumes:
       - ./sambatest:/chia-fd-x
     ports:
