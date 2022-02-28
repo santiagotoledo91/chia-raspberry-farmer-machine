@@ -18,6 +18,7 @@ services:
       - ./scripts/add-nodes.sh:/scripts/add-nodes.sh
     ports:
       - "8444:8444"
+      - "55400:55400"
 
   chiadog:
     image: artjacobson/chiadog-docker:latest
