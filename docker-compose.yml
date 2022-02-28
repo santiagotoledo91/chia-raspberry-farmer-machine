@@ -97,6 +97,7 @@ services:
       - TZ=Europe/Madrid
       - USERID=1001
       - GROUPID=1001
+    command: '-u "chia;chia"'
     volumes:
       - ./samba/etc/samba/smb.conf:/etc/samba/smb.conf
       - ./sambatest:/chia-fd-x
