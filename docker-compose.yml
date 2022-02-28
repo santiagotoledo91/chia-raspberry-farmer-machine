@@ -97,7 +97,7 @@ services:
       - TZ=Europe/Madrid
       - PUID=1000
       - PGID=1000
-    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "1000;1000;chia;chia;chia" -p'
+    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia;1000;chia;1000" -p'
     volumes:
       - ./sambatest:/chia-fd-x
     ports:
