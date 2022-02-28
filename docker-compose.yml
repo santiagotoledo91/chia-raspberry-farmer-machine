@@ -100,7 +100,7 @@ services:
 #      - PERMISSIONS=755
     command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia" -p'
     volumes:
-      - ./disks/chia-fd-6:/chia-fd-x
+      - ./sambatest:/chia-fd-x
     ports:
       - "139:139/tcp"
       - "445:445/tcp"
