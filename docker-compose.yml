@@ -95,7 +95,10 @@ services:
     restart: on-failure
     environment:
       - TZ=Europe/Madrid
-    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia;chia;chia;Chia plotting destination disk" -u "chia;chia" -p'
+#      - USERID=1001
+#      - GROUPID=1001
+#      - PERMISSIONS=755
+    command: '-s "chia-fd-x;/chia-fd-x;yes;no;no;chia" -u "chia;chia" -p'
     volumes:
       - ./disks/chia-fd-6:/chia-fd-x
     ports:
